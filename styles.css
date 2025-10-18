@@ -107,15 +107,19 @@ Adds letter spacing for readability. */
 Rounded corners and shadow for depth.
 Padding and margin for spacing. */
 .main-content {
-    background-color: var(--bg-secondary);
+    background-color: rgba(73, 72, 75, 0.55); /* using var --bg-secondary with opacity */
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     margin-bottom: var(--spacing-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 
+                0 1.5px 32px 0 rgba(157, 78, 221, 0.12); /* add a slight purple shadow for depth */
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(157, 78, 221, 0.11); /* subtle purple border for glass edge */
 }
 
-/* Mode selector buttons */
-/* Sets display to flex (horizontal layout).
+/* Mode selector buttons focus rest restore
+Sets display to flex (horizontal layout).
 Adds space between child elements.
 Adds margin below the selector.
 Centers child elements horizontally. */
@@ -127,7 +131,7 @@ Centers child elements horizontally. */
     justify-content: center;
 }
 
-/* Targets mode button styling.
+/* Targets mode button styling for focus rest restore buttons.
 Transparent button background.
 Silver border, 2px solid.
 Rounded corners.
@@ -153,18 +157,9 @@ Ensures buttons have at least 100px width. */
     min-width: 100px;
 }
 
-/* Mode button hover state */
+/* Mode button hover state styling for focus rest restore buttons*/
 /* Changes border color and text color on hover.
 Moves button up slightly for interactive feedback. */
-
-/* Active mode button styling */
-/* Purple background and border for selected mode.
-White text for contrast.
-Purple glow shadow effect. */
-
-/* Active mode button hover state */
-/* Darker purple background on hover.
-Maintains purple theme with enhanced contrast. */
 
 .mode-btn:hover {
     border-color: var(--accent-silver);
@@ -172,12 +167,22 @@ Maintains purple theme with enhanced contrast. */
     transform: translateY(-2px);
 }
 
+/* Active mode button styling for focus rest restore buttons*/
+/* Purple background and border for selected mode.
+White text for contrast.
+Purple glow shadow effect. */
+
 .mode-btn.active {
     background-color: var(--accent-purple);
-    border-color: var(--accent-purple);
+    border-color: var(--accent-silver-dark);
+    /* border-color: green; */
     color: var(--text-primary);
     box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
 }
+
+/* Active mode button hover state styling for focus rest restore buttons*/
+/* Darker purple background on hover.
+Maintains purple theme with enhanced contrast. */
 
 .mode-btn.active:hover {
     background-color: var(--accent-purple-dark);
@@ -239,10 +244,10 @@ Minimum width for consistency.
 Smooth transitions for interactions. */
 
 .control-btn {
-    padding: var(--spacing-md) var(--spacing-xl);
+    padding: var(--spacing-sm) var(--spacing-md);
     border: none;
     border-radius: var(--radius-md);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-md);
     font-weight: 500;
     cursor: pointer;
     transition: all var(--transition-normal);
@@ -445,7 +450,7 @@ Outlines with purple color and slight offset. */
 
 .mode-btn:focus,
 .control-btn:focus {
-    outline: 2px solid var(--accent-purple);
+    outline: 2px solid var(--accent-purple-dark);
     outline-offset: 2px;
 }
 
