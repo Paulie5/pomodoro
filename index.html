@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A minimalist Pomodoro timer web app for productivity">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main container for the entire app -->
+    <div class="container">
+        <!-- Header with app title -->
+        <header class="header">
+            <h1 class="title">Pomodoro Timer</h1>
+        </header>
+
+        <!-- Main timer section -->
+        <main class="main-content">
+            <!-- Mode selection buttons -->
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="work">Work</button>
+                <button class="mode-btn" data-mode="short-break">Short Break</button>
+                <button class="mode-btn" data-mode="long-break">Long Break</button>
+            </div>
+
+            <!-- Timer display -->
+            <div class="timer-display">
+                <div class="time" id="time-display">25:00</div>
+                <div class="mode-label" id="mode-label">Work Time</div>
+            </div>
+
+            <!-- Control buttons -->
+            <div class="controls">
+                <button class="control-btn primary" id="start-pause-btn">Start</button>
+                <button class="control-btn secondary" id="reset-btn">Reset</button>
+            </div>
+
+            <!-- Session counter -->
+            <div class="session-info">
+                <div class="session-counter">
+                    <span class="label">Sessions Completed:</span>
+                    <span class="count" id="session-count">0</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Focus • Rest • Repeat</p>
+        </footer>
+    </div>
+
+    <!-- Link to JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
