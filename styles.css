@@ -1,8 +1,11 @@
 /* CSS Custom Properties (CSS Variables) for consistent theming */
+/* Defines reusable values for colors, spacing, fonts, and transitions.
+Makes it easy to change the entire theme by modifying these values. */
+
 :root {
     /* Color palette - black background with purple/silver accents */
     --bg-primary: #0a0a0a;        /* Main background - very dark black */
-    --bg-secondary: #1a1a1a;      /* Secondary background for cards/buttons */
+    --bg-secondary: #2b2b2b;      /* Secondary background for cards/buttons */
     --text-primary: #f0f0f0;      /* Primary text - bright white */
     --text-secondary: #d0d0d0;    /* Secondary text - light grey */
     --text-muted: #a0a0a0;        /* Muted text - medium grey */
@@ -47,11 +50,19 @@
 }
 
 /* Reset and base styles */
+/* Universal selector removes default browser margins and padding.
+Sets box-sizing to border-box for easier sizing calculations. */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
+/* Body styling */
+/* Sets the main font family using system fonts.
+Dark background with light text for zen aesthetic.
+Full height with centered content using flexbox.
+Prevents horizontal scrolling. */
 
 body {
     font-family: var(--font-family);
@@ -66,6 +77,8 @@ body {
 }
 
 /* Main container - centers everything */
+/* Full width with maximum width constraint.
+Centers content horizontally and adds padding. */
 .container {
     width: 100%;
     max-width: 500px;
@@ -74,18 +87,25 @@ body {
 }
 
 /* Header styles */
+/* Adds space below the header section. */
 .header {
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
 }
 
+/* App title styling */
+/* Large, thin font weight for elegant appearance.
+Adds letter spacing for readability. */
 .title {
     font-size: var(--font-size-3xl);
-    font-weight: 300;
+    font-weight: 200;
     color: var(--text-primary);
     letter-spacing: 0.05em;
 }
 
 /* Main content area */
+/* Card-like container with dark background.
+Rounded corners and shadow for depth.
+Padding and margin for spacing. */
 .main-content {
     background-color: var(--bg-secondary);
     border-radius: var(--radius-lg);
@@ -95,12 +115,30 @@ body {
 }
 
 /* Mode selector buttons */
+/* Sets display to flex (horizontal layout).
+Adds space between child elements.
+Adds margin below the selector.
+Centers child elements horizontally. */
+
 .mode-selector {
     display: flex;
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-xl);
     justify-content: center;
 }
+
+/* Targets mode button styling.
+Transparent button background.
+Silver border, 2px solid.
+Rounded corners.
+Sets text color to secondary color.
+Sets button padding.
+Sets font size.
+Makes font slightly bold.
+Shows pointer cursor on hover.
+Smooth transition for style changes.
+Ensures buttons have at least 100px width. */
+
 
 .mode-btn {
     background-color: transparent;
@@ -115,8 +153,21 @@ body {
     min-width: 100px;
 }
 
+/* Mode button hover state */
+/* Changes border color and text color on hover.
+Moves button up slightly for interactive feedback. */
+
+/* Active mode button styling */
+/* Purple background and border for selected mode.
+White text for contrast.
+Purple glow shadow effect. */
+
+/* Active mode button hover state */
+/* Darker purple background on hover.
+Maintains purple theme with enhanced contrast. */
+
 .mode-btn:hover {
-    border-color: var(--accent-purple);
+    border-color: var(--accent-silver);
     color: var(--accent-purple);
     transform: translateY(-2px);
 }
@@ -130,14 +181,21 @@ body {
 
 .mode-btn.active:hover {
     background-color: var(--accent-purple-dark);
-    border-color: var(--accent-purple-dark);
+    border-color: var(--accent-silver-dark);
     transform: translateY(-2px);
 }
 
-/* Timer display */
+/* Timer display container */
+/* Adds margin below the timer section. */
 .timer-display {
     margin-bottom: var(--spacing-xl);
 }
+
+/* Large timer text */
+/* Very large font size for prominent display.
+Thin font weight for elegance.
+Tabular numbers ensure consistent spacing.
+Letter spacing for clarity. */
 
 .time {
     font-size: var(--font-size-4xl);
@@ -148,6 +206,13 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* Mode label styling */
+/* Small font size for subtle information.
+Sets text color to secondary color.
+Light font weight for subtle appearance.
+Uppercase text for emphasis.
+Letter spacing for clarity. */
+
 .mode-label {
     font-size: var(--font-size-lg);
     color: var(--text-secondary);
@@ -156,13 +221,22 @@ body {
     letter-spacing: 0.1em;
 }
 
-/* Control buttons */
+/* Control buttons container */
+/* Flexbox layout with centered buttons.
+Gap between buttons and margin below. */
 .controls {
     display: flex;
     gap: var(--spacing-md);
     justify-content: center;
     margin-bottom: var(--spacing-xl);
+    align-items: center;
 }
+
+/* Base control button styling */
+/* Padding, rounded corners, and font styling.
+Uppercase text with letter spacing.
+Minimum width for consistency.
+Smooth transitions for interactions. */
 
 .control-btn {
     padding: var(--spacing-md) var(--spacing-xl);
@@ -177,17 +251,30 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* Primary button (Start/Pause) */
+/* Purple background matching theme.
+White text for contrast.
+Purple glow shadow effect. */
+
 .control-btn.primary {
     background-color: var(--accent-purple);
     color: var(--text-primary);
     box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
 }
 
+/* Primary button hover state */
+/* Darker purple background on hover.
+Enhanced shadow and upward movement. */
+
 .control-btn.primary:hover {
     background-color: var(--accent-purple-dark);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(157, 78, 221, 0.4);
+    box-shadow: 0 3px 10px rgba(157, 78, 221, 0.4);
 }
+
+/* Secondary button (Reset) */
+/* Transparent background with silver border.
+Silver text color for subtlety. */
 
 .control-btn.secondary {
     background-color: transparent;
@@ -195,10 +282,16 @@ body {
     border: 2px solid var(--accent-silver);
 }
 
+
+/* Secondary button hover state */
+/* Silver background with dark text on hover.
+Upward movement for feedback. */
+
 .control-btn.secondary:hover {
-    background-color: var(--accent-silver);
+    background-color:var(--bg-secondary);
     color: var(--bg-primary);
     transform: translateY(-2px);
+    color: var(--accent-purple-dark);
 }
 
 /* Session information */
@@ -207,6 +300,10 @@ body {
     border-top: 1px solid var(--accent-silver);
 }
 
+/* Session counter layout */
+/* Flexbox for horizontal alignment.
+Centers content with gap between elements. */
+
 .session-counter {
     display: flex;
     justify-content: center;
@@ -214,10 +311,22 @@ body {
     gap: var(--spacing-sm);
 }
 
+/* Session counter label styling */
+/* Small font size for subtle information.
+Sets text color to secondary color. */
+
 .session-counter .label {
     font-size: var(--font-size-base);
     color: var(--text-secondary);
 }
+
+/* Session counter count styling */
+/* Large font size for prominent display.
+Bold font weight for emphasis.
+Sets color to primary accent color.
+Background color matches theme.
+Rounded corners for clean appearance.
+Minimum width for consistent spacing. */
 
 .session-counter .count {
     font-size: var(--font-size-xl);
@@ -230,6 +339,11 @@ body {
 }
 
 /* Footer */
+/* Text centered with muted color.
+Small font size for subtle appearance.
+Light font weight for subtle appearance.
+Letter spacing for clarity. */
+
 .footer {
     text-align: center;
     color: var(--text-muted);
@@ -239,31 +353,57 @@ body {
 }
 
 /* Responsive design for mobile devices */
+/* Media query for screens smaller than 480px.
+Adjusts layout for mobile viewing. */
+
+/* Mobile container adjustments */
+/* Reduces padding for smaller screens. */
+
 @media (max-width: 480px) {
     .container {
         padding: var(--spacing-md);
     }
+
+/* Mobile main content */
+/* Smaller padding for mobile layout. */
     
     .main-content {
         padding: var(--spacing-lg);
     }
+
+/* Mobile title */
+/* Smaller font size for mobile screens. */
     
     .title {
         font-size: var(--font-size-2xl);
     }
+
+/* Mobile timer display */
+/* Smaller timer font for mobile. */
     
     .time {
         font-size: var(--font-size-3xl);
     }
+
+/* Mobile mode selector */
+/* Stacks buttons vertically on mobile.
+Reduces gap between buttons. */
     
     .mode-selector {
         flex-direction: column;
         gap: var(--spacing-xs);
     }
+
+/* Mobile mode buttons */
+/* Removes minimum width constraint. */
     
     .mode-btn {
         min-width: auto;
     }
+    
+/* Mobile control buttons */
+/* Stacks buttons vertically.
+Full width buttons for easier tapping. */
     
     .controls {
         flex-direction: column;
@@ -277,6 +417,9 @@ body {
 }
 
 /* Animation for timer completion */
+/* Keyframe animation for pulsing effect.
+Scales element up and down smoothly. */
+
 @keyframes pulse {
     0% {
         transform: scale(1);
@@ -289,11 +432,17 @@ body {
     }
 }
 
+/* Timer completion animation class */
+/* Applies pulsing animation when timer completes.
+Infinite loop with smooth easing. */    
 .timer-complete {
     animation: pulse 1s ease-in-out infinite;
 }
 
 /* Focus states for accessibility */
+/* Focus state for mode buttons and control buttons.
+Outlines with purple color and slight offset. */
+
 .mode-btn:focus,
 .control-btn:focus {
     outline: 2px solid var(--accent-purple);
@@ -301,12 +450,18 @@ body {
 }
 
 /* Disabled state for buttons */
+/* Makes buttons slightly transparent and prevents interactions.
+Prevents button from being clicked or focused. */
+
 .mode-btn:disabled,
 .control-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none !important;
 }
+
+/* Disabled button hover state */
+/* Prevents button from being clicked or focused. */
 
 .mode-btn:disabled:hover,
 .control-btn:disabled:hover {
