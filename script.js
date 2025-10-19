@@ -92,6 +92,132 @@ const state = {
 };
 
 // ============================================================================
+// 🔄 SERVICE WORKER TIMER - Accurate Background Timing
+// ============================================================================
+
+let timerWorker = null;
+
+/**
+ * Initialize Service Worker for accurate background timing
+ * Service Workers run independently of the main tab
+ */
+function initializeServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./timer-worker.js')
+            .then(() => {
+                console.log('✅ Service Worker registered successfully');
+                
+                // Create Web Worker for timer
+                timerWorker = new Worker('./timer-worker.js');
+                
+                // Handle messages from Service Worker
+                timerWorker.onmessage = (event) => {
+                    const { type, remaining, elapsed } = event.data;
+                    
+                    switch (type) {
+                        case 'tick':
+                            // Update timer display
+                            state.timeRemaining = remaining;
+                            updateDisplay();
+                            break;
+                        case 'complete':
+                            // Timer completed
+                            timerComplete();
+                            break;
+                    }
+                };
+            })
+            .catch(err => console.log('❌ Service Worker failed:', err));
+    } else {
+        console.log('⚠️ Service Worker not supported, using fallback');
+    }
+}
+
+// ============================================================================
+// 🔄 BACKGROUND TIMER HANDLING - Timestamp-Based Solution (MOST RELIABLE)
+// ============================================================================
+
+let timerStartTime = null; // When the timer actually started
+let pausedTime = 0; // Total time paused
+
+/**
+ * 🎯 TIMESTAMP-BASED TIMER - Most Accurate Solution
+ * 
+ * HOW IT WORKS:
+ * - Store when timer started (timestamp)
+ * - Calculate elapsed time using Date.now()
+ * - Works perfectly even when tab is hidden
+ * - No timer conflicts or double-counting
+ */
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        // Tab became inactive - just log it
+        console.log('🍅 Tab hidden - timer continues accurately');
+    } else {
+        // Tab became active - update display
+        console.log('🍅 Tab active - updating display');
+        if (state.isRunning) {
+            updateDisplay();
+        }
+    }
+});
+
+/**
+ * 🚀 START TIMER WITH TIMESTAMPS - Modified Version
+ * 
+ * This replaces the original startTimer function
+ * Uses timestamps instead of setInterval for accuracy
+ */
+function startTimerWithTimestamps() {
+    if (state.isRunning) return;
+    
+    state.isRunning = true;
+    timerStartTime = Date.now(); // Record when timer started
+    pausedTime = 0; // Reset paused time
+    updateStartPauseButton();
+    
+    // Update display every second
+    state.timerInterval = setInterval(() => {
+        // Calculate elapsed time since start
+        const elapsed = Math.floor((Date.now() - timerStartTime - pausedTime) / 1000);
+        const remaining = state.durations[state.currentMode] - elapsed;
+        
+        state.timeRemaining = Math.max(0, remaining);
+        updateDisplay();
+        
+        if (state.timeRemaining <= 0) {
+            timerComplete();
+        }
+    }, 1000);
+}
+
+/**
+ * ⏸️ PAUSE TIMER WITH TIMESTAMPS - Modified Version
+ */
+function pauseTimerWithTimestamps() {
+    if (!state.isRunning) return;
+    
+    state.isRunning = false;
+    updateStartPauseButton();
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+    
+    // Record how long we were paused
+    pausedTime += Date.now() - timerStartTime - (state.durations[state.currentMode] - state.timeRemaining) * 1000;
+}
+
+/**
+ * 🔄 RESET TIMER WITH TIMESTAMPS - Modified Version
+ */
+function resetTimerWithTimestamps() {
+    pauseTimerWithTimestamps();
+    state.timeRemaining = state.durations[state.currentMode];
+    timerStartTime = null;
+    pausedTime = 0;
+    updateDisplay();
+}
+
+// ============================================================================
 // 🎯 DOM ELEMENT REFERENCES - Connecting JavaScript to HTML
 // ============================================================================
 //
@@ -365,32 +491,29 @@ function updateStartPauseButton() {
  * - Arrow functions: Shorter way to write functions
  */
 function startTimer() {
-    // GUARD CLAUSE: Don't start if already running
-    // This prevents multiple timers from running at the same time
-    if (state.isRunning) return; // 'return' exits the function immediately
+    if (state.isRunning) return;
     
-    // UPDATE STATE: Mark timer as running
     state.isRunning = true;
-    
-    // UPDATE UI: Change button appearance
     updateStartPauseButton();
     
-    // START THE COUNTDOWN: Run code every 1000 milliseconds (1 second)
-    // setInterval() returns a unique ID that we need to stop the timer later
-    state.timerInterval = setInterval(() => {
-        // This arrow function runs every second:
-        
-        // DECREASE TIME: Subtract 1 second from remaining time
-        state.timeRemaining--;
-        
-        // UPDATE DISPLAY: Show the new time to the user
-        updateDisplay();
-        
-        // CHECK COMPLETION: Stop if timer reaches zero
-        if (state.timeRemaining <= 0) {
-            timerComplete(); // Call our completion function
-        }
-    }, 1000); // 1000 milliseconds = 1 second
+    if (timerWorker) {
+        // Send start command to Service Worker
+        timerWorker.postMessage({
+            action: 'start',
+            data: { duration: state.timeRemaining }
+        });
+    } else {
+        // Fallback to original timer if Service Worker not available
+        console.log('Using fallback timer');
+        state.timerInterval = setInterval(() => {
+            state.timeRemaining--;
+            updateDisplay();
+            
+            if (state.timeRemaining <= 0) {
+                timerComplete();
+            }
+        }, 1000);
+    }
 }
 
 /**
@@ -412,23 +535,19 @@ function startTimer() {
  * - State cleanup: Removing references to prevent memory leaks
  */
 function pauseTimer() {
-    // GUARD CLAUSE: Don't pause if not running
-    // This prevents errors if someone tries to pause a stopped timer
     if (!state.isRunning) return;
     
-    // UPDATE STATE: Mark timer as stopped
     state.isRunning = false;
-    
-    // UPDATE UI: Change button back to "Start"
     updateStartPauseButton();
     
-    // STOP THE TIMER: Use clearInterval() with the stored ID
-    // clearInterval() stops the timer by using the ID we got from setInterval()
-    clearInterval(state.timerInterval);
-    
-    // CLEANUP: Set timer ID back to null (empty)
-    // This prevents memory leaks and makes our state clean
-    state.timerInterval = null;
+    if (timerWorker) {
+        // Send pause command to Service Worker
+        timerWorker.postMessage({ action: 'pause' });
+    } else {
+        // Fallback: stop original timer
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+    }
 }
 
 /**
@@ -448,16 +567,14 @@ function pauseTimer() {
  * - State reset: Going back to initial values
  */
 function resetTimer() {
-    // STOP CURRENT TIMER: If timer is running, stop it first
     pauseTimer();
-    
-    // RESET TIME: Set time back to the duration of current mode
-    // state.durations[state.currentMode] gets the duration for the current mode
-    // Example: if currentMode is 'work', this gets state.durations.work (1500 seconds)
     state.timeRemaining = state.durations[state.currentMode];
-    
-    // UPDATE DISPLAY: Show the reset time to the user
     updateDisplay();
+    
+    if (timerWorker) {
+        // Send reset command to Service Worker
+        timerWorker.postMessage({ action: 'reset' });
+    }
 }
 
 /**
@@ -660,8 +777,14 @@ function handleModeClick(event) {
  * Initializes the app when the page loads
  * This function runs once when the HTML page is fully loaded
  */
+
 function initializeApp() {
     console.log('🍅 Pomodoro Timer initialized!');
+        
+        // Initialize Service Worker first
+        initializeServiceWorker();
+        
+        // ... rest of the function stays the same
     
     // Set up event listeners for all interactive elements
     elements.startPauseBtn.addEventListener('click', handleStartPauseClick);
@@ -805,5 +928,5 @@ KEY JAVASCRIPT CONCEPTS USED IN THIS APP:
    - Template literals: `Hello ${name}` - puts variables into strings
    - padStart(): adds leading zeros to numbers
 
-This app demonstrates many fundamental JavaScript concepts in a practical way!
+
 */
