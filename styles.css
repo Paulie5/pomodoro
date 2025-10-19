@@ -299,48 +299,33 @@ Upward movement for feedback. */
     color: var(--accent-purple-dark);
 }
 
-/* Session information */
-.session-info {
+/* Zen Quote Section */
+.quote-section {
     padding-top: var(--spacing-lg);
     border-top: 1px solid var(--accent-silver);
+    text-align: center;
 }
 
-/* Session counter layout */
-/* Flexbox for horizontal alignment.
-Centers content with gap between elements. */
-
-.session-counter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-/* Session counter label styling */
-/* Small font size for subtle information.
-Sets text color to secondary color. */
-
-.session-counter .label {
-    font-size: var(--font-size-base);
+.quote-text {
+    font-size: var(--font-size-lg);
     color: var(--text-secondary);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.6;
+    margin: 0;
+    padding: var(--spacing-md);
+    opacity: 1;
+    transition: opacity var(--transition-normal);
+    max-width: 400px;
+    margin: 0 auto;
 }
 
-/* Session counter count styling */
-/* Large font size for prominent display.
-Bold font weight for emphasis.
-Sets color to primary accent color.
-Background color matches theme.
-Rounded corners for clean appearance.
-Minimum width for consistent spacing. */
+.quote-text.fade-out {
+    opacity: 0;
+}
 
-.session-counter .count {
-    font-size: var(--font-size-xl);
-    font-weight: 600;
-    color: var(--accent-purple);
-    background-color: var(--bg-primary);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    min-width: 40px;
+.quote-text.fade-in {
+    opacity: 1;
 }
 
 /* Footer */

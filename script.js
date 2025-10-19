@@ -84,7 +84,6 @@ const state = {
     currentMode: 'work',      // String: Which timer mode is active
     timeRemaining: 25 * 60,   // Number: Seconds left in current timer
     isRunning: false,         // Boolean: Is timer counting down? (true/false)
-    sessionCount: 0,          // Number: How many work sessions completed
     
     // 🔄 TIMER INTERVAL REFERENCE - Needed to stop the timer
     // This will store the ID returned by setInterval() so we can stop it later
@@ -264,13 +263,133 @@ const elements = {
     // ⏰ TIMER DISPLAY ELEMENTS - The visual timer components
     timeDisplay: document.getElementById('time-display'),    // The big "25:00" display
     modeLabel: document.getElementById('mode-label'),       // The "Work Time" label
-    sessionCount: document.getElementById('session-count'), // The session counter
+    quoteDisplay: document.getElementById('quote-display'),  // The zen quote display
     
     // 🎮 BUTTON ELEMENTS - The interactive controls
     startPauseBtn: document.getElementById('start-pause-btn'), // Start/Pause button
     resetBtn: document.getElementById('reset-btn'),            // Reset button
     modeButtons: document.querySelectorAll('.mode-btn')       // All mode buttons (array)
 };
+
+// ============================================================================
+// 🧘 ZEN QUOTES SYSTEM - Inspirational Messages for Mindfulness
+// ============================================================================
+
+/**
+ * 📜 ZEN QUOTES COLLECTION - Inspirational Messages
+ * 
+ * This array contains zen and productivity quotes that will be displayed
+ * to inspire focus, mindfulness, and balance during work and rest.
+ * 
+ * QUOTE CATEGORIES:
+ * - Focus and mindfulness
+ * - Productivity and work
+ * - Rest and balance
+ * - Present moment awareness
+ */
+const zenQuotes = [
+    "The present moment is all you ever have.",
+    "One breath at a time. One task at a time.",
+    "Rest is not idleness. Rest is necessary.",
+    "Focus is a muscle. Rest helps it grow.",
+    "Do less, but do it better.",
+    "Wherever you are, be there totally.",
+    "The mind is everything. What you think you become.",
+    "Peace comes from within. Do not seek it without.",
+    "Simplicity is the ultimate sophistication.",
+    "The quieter you become, the more you can hear.",
+    "Be present in all things and thankful for all things.",
+    "Mindfulness is about being fully awake in our lives.",
+    "The best time to plant a tree was 20 years ago. The second best time is now.",
+    "Quality is not an act, it is a habit.",
+    "The way to get started is to quit talking and begin doing.",
+    "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+    "The only way to do great work is to love what you do.",
+    "Don't be pushed around by the fears in your mind. Be led by the dreams in your heart.",
+    "The future belongs to those who believe in the beauty of their dreams.",
+    "It is during our darkest moments that we must focus to see the light.",
+    "The only impossible journey is the one you never begin.",
+    "Believe you can and you're halfway there.",
+    "The way to get started is to quit talking and begin doing.",
+    "Don't watch the clock; do what it does. Keep going.",
+    "The only way to do great work is to love what you do.",
+    "Success is walking from failure to failure with no loss of enthusiasm.",
+    "The future belongs to those who believe in the beauty of their dreams.",
+    "It always seems impossible until it's done.",
+    "The only person you are destined to become is the person you decide to be.",
+    "Life is what happens to you while you're busy making other plans."
+];
+
+/**
+ * 🎲 GET RANDOM QUOTE FUNCTION - Selects a Random Quote
+ * 
+ * WHAT IT DOES:
+ * Randomly selects one quote from the zenQuotes array.
+ * 
+ * HOW IT WORKS:
+ * Uses Math.random() to generate a random number between 0 and 1
+ * Multiplies by array length to get a valid index
+ * Uses Math.floor() to round down to a whole number
+ * 
+ * RETURNS:
+ * A random quote string from the collection
+ */
+function getRandomQuote() {
+    const randomIndex = Math.floor(Math.random() * zenQuotes.length);
+    return zenQuotes[randomIndex];
+}
+
+/**
+ * 🎭 UPDATE QUOTE FUNCTION - Changes Quote with Animation
+ * 
+ * WHAT IT DOES:
+ * Smoothly transitions from the current quote to a new random quote.
+ * 
+ * HOW IT WORKS:
+ * 1. Fade out current quote (0.3s)
+ * 2. Change quote text
+ * 3. Fade in new quote (0.3s)
+ * 
+ * ANIMATION CONCEPTS:
+ * - CSS transitions for smooth opacity changes
+ * - setTimeout() for timing the animation sequence
+ * - CSS classes for fade effects
+ */
+function updateQuote() {
+    const quoteElement = elements.quoteDisplay;
+    
+    // STEP 1: Fade out current quote
+    quoteElement.classList.add('fade-out');
+    
+    // STEP 2: After fade out completes, change quote and fade in
+    setTimeout(() => {
+        // Change the quote text
+        quoteElement.textContent = getRandomQuote();
+        
+        // Remove fade-out class and add fade-in class
+        quoteElement.classList.remove('fade-out');
+        quoteElement.classList.add('fade-in');
+        
+        // Remove fade-in class after animation completes
+        setTimeout(() => {
+            quoteElement.classList.remove('fade-in');
+        }, 300); // 300ms matches CSS transition duration
+    }, 300); // Wait for fade-out to complete
+}
+
+/**
+ * 🎨 DISPLAY QUOTE FUNCTION - Shows Initial Quote
+ * 
+ * WHAT IT DOES:
+ * Displays a random quote when the app first loads.
+ * 
+ * HOW IT WORKS:
+ * Gets a random quote and sets it as the initial display text.
+ * No animation needed for initial load.
+ */
+function displayQuote() {
+    elements.quoteDisplay.textContent = getRandomQuote();
+}
 
 // ============================================================================
 // 🛠️ UTILITY FUNCTIONS - Helper Functions That Do Specific Tasks
@@ -390,11 +509,6 @@ function updateDisplay() {
     // state.currentMode is the key, modeLabels[state.currentMode] is the value
     // Example: if state.currentMode = 'work', then modeLabels['work'] = 'Work Time'
     elements.modeLabel.textContent = modeLabels[state.currentMode];
-    
-    // STEP 3: Update the session counter
-    // Convert the number to a string and display it
-    // state.sessionCount is a number, but textContent needs a string
-    elements.sessionCount.textContent = state.sessionCount;
 }
 
 /**
@@ -611,12 +725,9 @@ function timerComplete() {
         elements.timeDisplay.classList.remove('timer-complete');
     }, 3000); // 3000 milliseconds = 3 seconds
     
-    // SESSION COUNTING: Increment if we just finished a work session
-    // This only counts work sessions, not breaks
-    if (state.currentMode === 'work') {
-        state.sessionCount++; // Add 1 to the session count
-        updateDisplay(); // Update the display to show new count
-    }
+    // QUOTE UPDATE: Show a new inspirational quote
+    // This provides motivation and mindfulness after completing a timer
+    updateQuote();
     
     // NOTIFICATIONS: Alert the user that timer is complete
     showNotifications();
@@ -815,6 +926,9 @@ function initializeApp() {
     updateDisplay();
     updateModeButtons();
     updateStartPauseButton();
+    
+    // Display initial zen quote
+    displayQuote();
     
     console.log('✅ App ready! Current mode:', state.currentMode);
     console.log('⏰ Time remaining:', formatTime(state.timeRemaining));
