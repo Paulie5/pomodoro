@@ -755,6 +755,9 @@ function switchMode(mode) {
     // Update display
     updateDisplay();
     updateModeButtons();
+    
+    // Show new inspirational quote for the new mode
+    updateQuote();
 }
 
 // ============================================================================
