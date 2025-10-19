@@ -318,6 +318,7 @@ Upward movement for feedback. */
     transition: opacity var(--transition-normal);
     max-width: 400px;
     margin: 0 auto;
+    white-space: pre-line; /* ← Add this line */
 }
 
 .quote-text.fade-out {
