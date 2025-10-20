@@ -484,7 +484,7 @@ function updateDisplay() {
     // We create an object that maps mode names to display text
     // This is cleaner than using if/else statements
     const modeLabels = {
-        work: 'Work Time',           // When currentMode is 'work'
+        work: 'Deep Work',           // When currentMode is 'work'
         'short-break': 'Short Break', // When currentMode is 'short-break'
         'long-break': 'Long Break'    // When currentMode is 'long-break'
     };
@@ -779,7 +779,7 @@ function showBrowserNotification() {
     // Create notification content based on completed mode
     let title, body;
     if (state.currentMode === 'work') {
-        title = 'Work Session Complete! 🎉';
+        title = 'Work Session Complete! 🎉ß';
         body = 'Time for a break. You\'ve completed ' + state.sessionCount + ' sessions.';
     } else {
         title = 'Break Time Over! ⏰';
